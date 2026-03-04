@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stress Prediction</title>
+</head>
+<body>
+
+<h2>Enter Student Details</h2>
+
+<form action="/predict" method="post">
+
+    <input type="number" name="anxiety_level" placeholder="Anxiety Level" required><br><br>
+    <input type="number" name="self_esteem" placeholder="Self Esteem" required><br><br>
+    <input type="number" name="mental_health_history" placeholder="Mental Health History" required><br><br>
+    <input type="number" name="depression" placeholder="Depression" required><br><br>
+    <input type="number" name="headache" placeholder="Headache" required><br><br>
+    <input type="number" name="blood_pressure" placeholder="Blood Pressure" required><br><br>
+    <input type="number" name="sleep_quality" placeholder="Sleep Quality" required><br><br>
+    <input type="number" name="breathing_problem" placeholder="Breathing Problem" required><br><br>
+    <input type="number" name="noise_level" placeholder="Noise Level" required><br><br>
+    <input type="number" name="living_conditions" placeholder="Living Conditions" required><br><br>
+    <input type="number" name="safety" placeholder="Safety" required><br><br>
+    <input type="number" name="basic_needs" placeholder="Basic Needs" required><br><br>
+    <input type="number" name="academic_performance" placeholder="Academic Performance" required><br><br>
+    <input type="number" name="study_load" placeholder="Study Load" required><br><br>
+    <input type="number" name="teacher_student_relationship" placeholder="Teacher Student Relationship" required><br><br>
+    <input type="number" name="future_career_concerns" placeholder="Future Career Concerns" required><br><br>
+    <input type="number" name="social_support" placeholder="Social Support" required><br><br>
+    <input type="number" name="peer_pressure" placeholder="Peer Pressure" required><br><br>
+    <input type="number" name="extracurricular_activities" placeholder="Extracurricular Activities" required><br><br>
+    <input type="number" name="bullying" placeholder="Bullying" required><br><br>
+
+    <button type="submit">Predict</button>
+
+</form>
+
+<h3>{{ prediction_text }}</h3>
+
+</body>
+</html>
