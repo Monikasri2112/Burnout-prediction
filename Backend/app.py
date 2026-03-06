@@ -2,10 +2,10 @@ from flask import Flask, render_template, request
 import numpy as np
 import pickle
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../frontend")
 
 # Load trained model
-model = pickle.load(open("model.pkl", "rb"))
+model = pickle.load(open("../model/model.pkl", "rb"))
 
 @app.route('/')
 def home():
