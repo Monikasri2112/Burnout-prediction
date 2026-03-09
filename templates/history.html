@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}History — BurnoutIQ{% endblock %}
+
+{% block extra_styles %}
+.history-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px; flex-wrap: wrap; gap: 16px;
+  animation: fadeUp 0.4s ease;
+}
+.history-header h1 {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 26px; font-weight: 700; margin-bottom: 4px;
+}
+.history-header p { font-size: 13px; color: var(--muted); }
+
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin-bottom: 28px;
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+}
+.stat-card .s-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing:.07em; color: var(--muted); margin-bottom: 8px;
+}
+.stat-card .s-value { font-size: 26px; font-weight: 800; line-height: 1; }
+.stat-card .s-bar   { height: 3px; border-radius: 2px; background: var(--border); margin-top: 12px; }
+.stat-card .s-fill  { height: 100%; border-radius: 2px; }
+
+.table-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden; box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+.table-head {
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.table-head h2 {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 16px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.table-head h2 i { color: var(--accent); }
+.table-wrap { overflow-x: auto; padding: 0 8px 8px; }
+
+.empty-state {
+  text-align: center; padding: 60px 20px; color: var(--muted);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: .4; }
+.empty-state h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+.empty-state p  { font-size: 13px; margin-bottom: 20px; }
+
+@media(max-width:640px) {
+  .stat-row { grid-template-columns: 1fr; }
+}
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+
+  <div class="history-header">
+    <div>
+      <h1>Prediction History</h1>
+      <p>Showing predictions for {{ session.get('user_name', 'you') }}</p>
+    </div>
+    <a href="/" class="btn btn-primary" style="width:auto; padding:10px 20px;">
+      <i class="fa-solid fa-plus"></i> New Prediction
+    </a>
+  </div>
+
+  {% if data %}
+    {% set total = data | length %}
+    {% set ns = namespace(low=0, moderate=0, high=0) %}
+    {% for row in data %}
+      {% if row[12] == 'Low Stress' %}
+        {% set ns.low = ns.low + 1 %}
+      {% elif row[12] == 'Moderate Stress' %}
+        {% set ns.moderate = ns.moderate + 1 %}
+      {% else %}
+        {% set ns.high = ns.high + 1 %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="s-label">Total Predictions</div>
+        <div class="s-value" style="color:var(--accent)">{{ total }}</div>
+        <div class="s-bar"><div class="s-fill" style="width:100%;background:var(--accent)"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">Low Stress Results</div>
+        <div class="s-value" style="color:var(--ok)">{{ ns.low }}</div>
+        <div class="s-bar"><div class="s-fill" style="width:{{ (ns.low / total * 100)|int }}%;background:var(--ok)"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="s-label">High Stress Results</div>
+        <div class="s-value" style="color:var(--danger)">{{ ns.high }}</div>
+        <div class="s-bar"><div class="s-fill" style="width:{{ (ns.high / total * 100)|int }}%;background:var(--danger)"></div></div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-head">
+        <h2><i class="fa-solid fa-table-list"></i> All Records</h2>
+        <span style="font-size:12px;color:var(--muted)">{{ total }} total records</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Anxiety</th>
+              <th>Self Esteem</th>
+              <th>Depression</th>
+              <th>Sleep Quality</th>
+              <th>Study Load</th>
+              <th>Peer Pressure</th>
+              <th>Stress Level</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in data %}
+            <tr>
+              <td style="font-weight:700;color:var(--muted);font-size:12px;">{{ row[0] }}</td>
+              <td>{{ row[2] }}/5</td>
+              <td>{{ row[3] }}/5</td>
+              <td>{{ row[5] }}/5</td>
+              <td>{{ row[6] }}/5</td>
+              <td>{{ row[8] }}/5</td>
+              <td>{{ row[11] }}/5</td>
+              <td>
+                {% if row[12] == 'Low Stress' %}
+                  <span class="badge badge-ok">{{ row[12] }}</span>
+                {% elif row[12] == 'Moderate Stress' %}
+                  <span class="badge badge-warn">{{ row[12] }}</span>
+                {% else %}
+                  <span class="badge badge-danger">{{ row[12] }}</span>
+                {% endif %}
+              </td>
+              <td style="color:var(--muted);font-size:12px;">{{ row[13] if row[13] else '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  {% else %}
+    <div class="table-card">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <h3>No Predictions Yet</h3>
+        <p>Take your first stress assessment to see results here</p>
+        <a href="/" class="btn btn-primary" style="width:auto;display:inline-flex;padding:12px 24px;">
+          <i class="fa-solid fa-brain"></i> Start Prediction
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

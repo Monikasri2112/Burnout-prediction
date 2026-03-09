@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Your Result — BurnoutIQ{% endblock %}
+
+{% block extra_styles %}
+.result-wrap {
+  max-width: 680px; margin: 0 auto;
+}
+.result-hero {
+  text-align: center; margin-bottom: 28px;
+  animation: fadeUp 0.4s ease;
+}
+.result-hero h1 {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 26px; font-weight: 700; margin-bottom: 6px;
+}
+
+/* Score ring */
+.score-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 40px;
+  text-align: center; margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+.score-ring {
+  width: 160px; height: 160px; margin: 0 auto 20px;
+  position: relative;
+}
+.score-ring svg { transform: rotate(-90deg); }
+.score-ring .ring-bg   { fill: none; stroke: var(--border); stroke-width: 10; }
+.score-ring .ring-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+.score-center {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.score-emoji  { font-size: 36px; line-height: 1; }
+.score-level  { font-size: 13px; font-weight: 700; margin-top: 4px; }
+
+.result-level-text {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 28px; font-weight: 700; margin-bottom: 8px;
+}
+.result-desc { font-size: 14px; color: var(--muted); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+/* Tips card */
+.tips-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px; margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+.tips-title {
+  font-family: 'Clash Display', sans-serif;
+  font-size: 16px; font-weight: 600; margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.tips-title i { color: var(--accent); }
+.tip-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; line-height: 1.6;
+}
+.tip-item:last-child { border: none; }
+.tip-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--glow); color: var(--accent);
+  font-size: 11px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+/* Action buttons */
+.action-btns {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  animation: fadeUp 0.4s ease 0.3s both;
+}
+.btn-outline {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--text); font-size: 14px; font-weight: 600;
+  font-family: 'Cabinet Grotesk', sans-serif;
+  cursor: pointer; text-decoration: none; transition: all 0.18s;
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); background: var(--glow); }
+{% endblock %}
+
+{% block content %}
+<div class="page-wrap result-wrap">
+
+  <div class="result-hero fade-up">
+    <h1>Your Stress Analysis</h1>
+    <p style="color:var(--muted);font-size:14px;">Based on your responses, here's what our ML model found</p>
+  </div>
+
+  <!-- Score Card -->
+  <div class="score-card">
+    {% if "Low" in prediction_text %}
+      {% set level = "Low Stress" %}
+      {% set emoji = "😊" %}
+      {% set color = "#10B981" %}
+      {% set desc = "Great news! Your stress levels are manageable. Keep maintaining your healthy habits and study-life balance." %}
+      {% set badge_cls = "badge-ok" %}
+    {% elif "Moderate" in prediction_text %}
+      {% set level = "Moderate Stress" %}
+      {% set emoji = "😐" %}
+      {% set color = "#F59E0B" %}
+      {% set desc = "You're experiencing moderate stress. It's time to take some proactive steps to prevent it from escalating." %}
+      {% set badge_cls = "badge-warn" %}
+    {% else %}
+      {% set level = "High Stress" %}
+      {% set emoji = "😰" %}
+      {% set color = "#EF4444" %}
+      {% set desc = "You're under significant stress. Please prioritize self-care and consider speaking with a counselor." %}
+      {% set badge_cls = "badge-danger" %}
+    {% endif %}
+
+    <div class="score-ring">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="ring-bg" cx="80" cy="80" r="70"/>
+        <circle class="ring-fill" id="ring-fill" cx="80" cy="80" r="70"
+          stroke="{{ color }}"
+          stroke-dasharray="440"
+          stroke-dashoffset="440"/>
+      </svg>
+      <div class="score-center">
+        <div class="score-emoji">{{ emoji }}</div>
+        <div class="score-level" style="color:{{ color }}">{{ level }}</div>
+      </div>
+    </div>
+
+    <div class="result-level-text" style="color:{{ color }}">{{ level }}</div>
+    <div style="margin-bottom:14px">
+      <span class="badge {{ badge_cls }}">{{ level }}</span>
+    </div>
+    <p class="result-desc">{{ desc }}</p>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-card">
+    <div class="tips-title">
+      <i class="fa-solid fa-lightbulb"></i> Personalized Recommendations
+    </div>
+
+    {% if "Low" in prediction_text %}
+      <div class="tip-item"><div class="tip-num">1</div><div>Continue your current study habits — they're clearly working well for you.</div></div>
+      <div class="tip-item"><div class="tip-num">2</div><div>Maintain your sleep schedule and physical activity routine.</div></div>
+      <div class="tip-item"><div class="tip-num">3</div><div>Consider helping peers who may be struggling — teaching reinforces your own learning.</div></div>
+    {% elif "Moderate" in prediction_text %}
+      <div class="tip-item"><div class="tip-num">1</div><div>Try the Pomodoro technique: 25 minutes of focused study followed by a 5-minute break.</div></div>
+      <div class="tip-item"><div class="tip-num">2</div><div>Prioritize 7–8 hours of sleep every night to improve cognitive function.</div></div>
+      <div class="tip-item"><div class="tip-num">3</div><div>Talk to a trusted friend, family member, or academic advisor about your concerns.</div></div>
+    {% else %}
+      <div class="tip-item"><div class="tip-num">1</div><div>Speak with your college counselor or a mental health professional immediately.</div></div>
+      <div class="tip-item"><div class="tip-num">2</div><div>Break tasks into very small steps — focus on just one thing at a time.</div></div>
+      <div class="tip-item"><div class="tip-num">3</div><div>Take a short break from social media and focus on real-world connections and rest.</div></div>
+    {% endif %}
+  </div>
+
+  <!-- Actions -->
+  <div class="action-btns">
+    <a href="/" class="btn-outline">
+      <i class="fa-solid fa-rotate-right"></i> Take Test Again
+    </a>
+    <a href="/history" class="btn-outline">
+      <i class="fa-solid fa-clock-rotate-left"></i> View History
+    </a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Animate ring on load
+  const ring = document.getElementById('ring-fill');
+  const level = "{{ level }}";
+  let pct = level.includes('Low') ? 0.3 : level.includes('Moderate') ? 0.6 : 0.9;
+  const circumference = 440;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumference - (pct * circumference);
+  }, 200);
+</script>
+{% endblock %}
