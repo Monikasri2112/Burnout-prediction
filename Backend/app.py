@@ -3,7 +3,8 @@ import numpy as np
 import pickle
 import mysql.connector
 
-app = Flask(__name__, template_folder="../templates")
+app = Flask(__name__, template_folder="../Frontend/templates")
+
 app.secret_key = "burnoutiq_secret_2024"
 
 db = mysql.connector.connect(
