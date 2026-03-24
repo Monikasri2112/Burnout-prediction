@@ -3,8 +3,12 @@ import numpy as np
 import pickle
 import mysql.connector
 import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-app = Flask(__name__, template_folder="../Frontend/templates")
+#app = Flask(__name__, template_folder="../Frontend/templates")
+
+template_path = os.path.join(BASE_DIR, "..", "Frontend", "templates")
+app = Flask(__name__, template_folder=template_path)
 
 app.secret_key = "burnoutiq_secret_2024"
 
@@ -32,7 +36,13 @@ else:
 cursor = db.cursor()
 print("Database connected successfully")
 
-model = pickle.load(open("../model/model.pkl", "rb"))
+
+
+
+#model = pickle.load(open("../model/model.pkl", "rb"))
+model_path = os.path.join(BASE_DIR, "..", "model", "model.pkl")
+model = pickle.load(open(model_path, "rb"))
+
 
 @app.route('/')
 def home():
