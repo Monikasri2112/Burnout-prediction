@@ -8,13 +8,27 @@ app = Flask(__name__, template_folder="../Frontend/templates")
 
 app.secret_key = "burnoutiq_secret_2024"
 
-db = mysql.connector.connect(
-    host=os.environ.get('MYSQLHOST', 'localhost'),
-    user=os.environ.get('MYSQLUSER', 'root'),
-    password=os.environ.get('MYSQLPASSWORD', 'Monika_21'),
-    database=os.environ.get('MYSQLDATABASE', 'burnout_db'),
-    port=int(os.environ.get('MYSQLPORT', 3306))
-)
+import os
+
+if os.environ.get("MYSQLHOST"):  
+    # 🚀 Railway (production)
+    db = mysql.connector.connect(
+        host=os.environ.get('MYSQLHOST'),
+        user=os.environ.get('MYSQLUSER'),
+        password=os.environ.get('MYSQLPASSWORD'),
+        database=os.environ.get('MYSQLDATABASE'),
+        port=int(os.environ.get('MYSQLPORT', 3306))
+    )
+else:
+    # 💻 Local (your system)
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Monika_21",
+        database="burnout_db"
+    )
+
+
 cursor = db.cursor()
 print("Database connected successfully")
 
@@ -131,6 +145,8 @@ def predict():
         prediction_text=f"Predicted Stress Level: {result}",
         username=session.get('user_name')
     )
-
+#if __name__ == "__main__":
+    #app.run(debug=True)
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
