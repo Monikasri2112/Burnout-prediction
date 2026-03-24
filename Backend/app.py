@@ -2,16 +2,18 @@ from flask import Flask, render_template, request, redirect, session
 import numpy as np
 import pickle
 import mysql.connector
+import os
 
 app = Flask(__name__, template_folder="../Frontend/templates")
 
 app.secret_key = "burnoutiq_secret_2024"
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Monika_21",
-    database="burnout_db"
+    host=os.environ.get('MYSQLHOST', 'localhost'),
+    user=os.environ.get('MYSQLUSER', 'root'),
+    password=os.environ.get('MYSQLPASSWORD', 'Monika_21'),
+    database=os.environ.get('MYSQLDATABASE', 'burnout_db'),
+    port=int(os.environ.get('MYSQLPORT', 3306))
 )
 cursor = db.cursor()
 print("Database connected successfully")
