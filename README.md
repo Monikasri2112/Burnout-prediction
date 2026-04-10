@@ -5,12 +5,6 @@ The Burnout Prediction System is a web-based application designed to assess an i
 
 ---
 
-## 🚀 Live Demo
-
-https://burnout-prediction-production.up.railway.app
-
----
-
 ## Features
 - Predicts burnout levels: Low, Moderate, or High
 - User-friendly web interface for input collection
